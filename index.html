@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arrays: Complete Study Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #2a2a3a;
+    --accent1: #7c3aed;
+    --accent2: #06b6d4;
+    --accent3: #f59e0b;
+    --accent4: #10b981;
+    --accent5: #f43f5e;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --code-bg: #0d0d18;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0a0a0f 0%, #130d2a 50%, #0a1628 100%);
+    padding: 60px 32px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
+    top: -200px; right: -100px;
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 15px;
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .class-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .badge {
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.3);
+    color: #a78bfa;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .badge:hover, .badge.active {
+    background: rgba(124,58,237,0.4);
+    border-color: var(--accent1);
+    color: #fff;
+  }
+
+  /* NAV */
+  .nav-tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active {
+    color: var(--accent2);
+    border-bottom-color: var(--accent2);
+  }
+
+  /* MAIN */
+  .main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* TOPIC CARD */
+  .topic-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .topic-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: background 0.2s;
+  }
+  .topic-header:hover { background: rgba(255,255,255,0.03); }
+  .topic-header.open { border-bottom-color: var(--border); }
+  .topic-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent1);
+    background: rgba(124,58,237,0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 36px;
+    text-align: center;
+  }
+  .topic-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    flex: 1;
+  }
+  .topic-meta {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .chevron {
+    color: var(--muted);
+    transition: transform 0.2s;
+    font-size: 18px;
+  }
+  .topic-header.open .chevron { transform: rotate(180deg); }
+  .topic-body {
+    display: none;
+    padding: 20px;
+  }
+  .topic-body.open { display: block; }
+
+  /* CONTENT TYPES */
+  .concept-box {
+    background: var(--surface);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .concept-box h4 {
+    color: var(--accent2);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .warn-box {
+    background: rgba(245,158,11,0.08);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .warn-box h4 { color: var(--accent3); font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+
+  .tip-box {
+    background: rgba(16,185,129,0.08);
+    border-left: 3px solid var(--accent4);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .tip-box h4 { color: var(--accent4); font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+
+  /* CODE BLOCK */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .kw { color: #c792ea; }
+  .ty { color: #82aaff; }
+  .fn { color: #82aaff; }
+  .num { color: #f78c6c; }
+  .cm { color: #546e7a; font-style: italic; }
+  .str { color: #c3e88d; }
+  .op { color: #89ddff; }
+
+  /* ARRAY VIZ */
+  .array-viz {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+  .array-cell {
+    min-width: 44px;
+    height: 44px;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    position: relative;
+    transition: all 0.3s;
+    background: var(--surface);
+  }
+  .array-cell:first-child { border-radius: 6px 0 0 6px; }
+  .array-cell:last-child { border-radius: 0 6px 6px 0; }
+  .array-cell + .array-cell { border-left: none; }
+  .array-cell .idx {
+    position: absolute;
+    top: -20px;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .array-cell.hl { background: rgba(6,182,212,0.2); border-color: var(--accent2); color: var(--accent2); }
+  .array-cell.hl2 { background: rgba(16,185,129,0.2); border-color: var(--accent4); color: var(--accent4); }
+  .array-cell.hl3 { background: rgba(244,63,94,0.2); border-color: var(--accent5); color: var(--accent5); }
+
+  /* INTERACTIVE DEMO */
+  .demo-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .demo-box h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--accent3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .demo-box h4::before { content: '⚡'; }
+  .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .demo-controls input {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    width: 220px;
+  }
+  .demo-controls input:focus { outline: none; border-color: var(--accent2); }
+  .btn {
+    background: var(--accent1);
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn:hover { background: #6d28d9; transform: translateY(-1px); }
+  .btn.sm { padding: 6px 14px; font-size: 12px; }
+  .btn.green { background: var(--accent4); }
+  .btn.green:hover { background: #059669; }
+  .btn.red { background: var(--accent5); }
+  .demo-output {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    min-height: 40px;
+    color: var(--accent2);
+  }
+  .demo-array-wrap { margin: 10px 0; overflow-x: auto; padding-top: 24px; }
+
+  /* TC/SC badge */
+  .tc-row { display: flex; gap: 12px; margin: 10px 0; flex-wrap: wrap; }
+  .tc-badge {
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.3);
+    color: #a78bfa;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* INIT TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  th {
+    background: rgba(124,58,237,0.2);
+    padding: 10px 14px;
+    text-align: left;
+    color: #a78bfa;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* SECTION LABEL */
+  .sec-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--muted);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sec-label span {
+    background: var(--accent1);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+  }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media(max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+
+  p { margin-bottom: 10px; font-size: 14px; }
+  ul, ol { padding-left: 20px; font-size: 14px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--accent2); }
+  em { color: var(--accent3); }
+
+  /* 2D matrix viz */
+  .matrix-viz {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 12px 0;
+  }
+  .matrix-row { display: flex; gap: 2px; }
+  .matrix-cell {
+    width: 40px; height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: all 0.3s;
+  }
+  .matrix-cell.row-hl { background: rgba(6,182,212,0.2); border-color: var(--accent2); color: var(--accent2); }
+  .matrix-cell.col-hl { background: rgba(16,185,129,0.2); border-color: var(--accent4); color: var(--accent4); }
+  .matrix-cell.diag-hl { background: rgba(245,158,11,0.2); border-color: var(--accent3); color: var(--accent3); }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-tag">// DSA Complete Study Guide — Arrays</div>
+  <h1>Arrays<br>Basic → Advanced</h1>
+  <p class="hero-sub">// Class 10.5 → 19 &nbsp;|&nbsp; 9 Classes &nbsp;|&nbsp; 82 Pages of Notes</p>
+  <div class="class-badges">
+    <span class="badge active" onclick="filterSection('all')">All Classes</span>
+    <span class="badge" onclick="showTab('basics')">10.5 · Array Basics</span>
+    <span class="badge" onclick="showTab('vectors')">12 · Vectors</span>
+    <span class="badge" onclick="showTab('reverse')">13 · Reverse</span>
+    <span class="badge" onclick="showTab('rotate')">14 · Rotate</span>
+    <span class="badge" onclick="showTab('pbr')">15 · Pass by Ref</span>
+    <span class="badge" onclick="showTab('advanced')">16-17 · Advanced</span>
+    <span class="badge" onclick="showTab('matrix')">18-19 · 2D Matrix</span>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showTab('basics')">🔰 Basics</div>
+  <div class="nav-tab" onclick="showTab('vectors')">📦 Vectors</div>
+  <div class="nav-tab" onclick="showTab('reverse')">🔄 Reverse</div>
+  <div class="nav-tab" onclick="showTab('rotate')">🔁 Rotate</div>
+  <div class="nav-tab" onclick="showTab('pbr')">📌 Pass by Ref</div>
+  <div class="nav-tab" onclick="showTab('advanced')">🚀 Advanced</div>
+  <div class="nav-tab" onclick="showTab('matrix')">🔲 2D Matrix</div>
+  <div class="nav-tab" onclick="showTab('playground')">⚡ Playground</div>
+</div>
+
+<div class="main">
+
+<!-- ===== BASICS ===== -->
+<div id="sec-basics" class="section active">
+  <div class="sec-label">Class 10.5 — Array Basics <span>15 pages</span></div>
+
+  <!-- 1. INTRO -->
+  <div class="topic-card">
+    <div class="topic-header open" onclick="toggleTopic(this)">
+      <span class="topic-num">01</span>
+      <span class="topic-title">Introduction to Arrays</span>
+      <span class="topic-meta">Definition · Syntax · Declaration</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body open">
+      <div class="concept-box">
+        <h4>What is an Array?</h4>
+        <p><strong>Array = Multiple values of the same datatype</strong> stored in contiguous memory locations.</p>
+        <p>Problem without arrays: Storing 5 numbers requires 5 variables. Storing 10⁵ numbers? Impossible with individual variables!</p>
+      </div>
+      <div class="grid2">
+        <div>
+          <p><strong>Syntax:</strong></p>
+          <pre><span class="ty">int</span> ar[<span class="num">5</span>]; <span class="cm">// 5-element int array</span>
+<span class="ty">float</span> fr[<span class="num">4</span>]; <span class="cm">// 4-element float array</span></pre>
+        </div>
+        <div>
+          <p><strong>Alternative Syntax (with init):</strong></p>
+          <pre><span class="cm">// Alt Syntax 1:</span>
+<span class="ty">int</span> ar[<span class="num">5</span>] = {<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>};
+
+<span class="cm">// Alt Syntax 2 (size auto-detected):</span>
+<span class="ty">int</span> ar[] = {<span class="num">10</span>, <span class="num">30</span>, <span class="num">40</span>};</pre>
+        </div>
+      </div>
+      <p>Visualization of <code>int ar[5] = {10, 20, 30, 40, 50}</code>:</p>
+      <div class="demo-array-wrap">
+        <div class="array-viz">
+          <div class="array-cell hl"><span class="idx">0</span>10</div>
+          <div class="array-cell"><span class="idx">1</span>20</div>
+          <div class="array-cell"><span class="idx">2</span>30</div>
+          <div class="array-cell"><span class="idx">3</span>40</div>
+          <div class="array-cell"><span class="idx">4</span>50</div>
+        </div>
+      </div>
+      <div class="warn-box">
+        <h4>Default Values</h4>
+        <p><strong>Arrays in functions (local):</strong> NOT initialized → random/garbage values</p>
+        <p><strong>Arrays global:</strong> Automatically set to default → int=0, float=0.0, char='\0'</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. INDEXING -->
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">02</span>
+      <span class="topic-title">Indexing</span>
+      <span class="topic-meta">Access · Bounds · name[index]</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concept-box">
+        <h4>Indexing Rule</h4>
+        <p>To access any cell: <strong>name[index]</strong></p>
+        <p>For <code>int ar[N]</code>: valid indices are <strong>0 to N-1</strong></p>
+        <p>First element = ar[0] &nbsp;&nbsp; Last element = ar[N-1]</p>
+      </div>
+      <pre>ar[<span class="num">0</span>] = <span class="num">10</span>;  ar[<span class="num">1</span>] = <span class="num">20</span>;  ar[<span class="num">2</span>] = <span class="num">30</span>;  ar[<span class="num">3</span>] = <span class="num">40</span>;  ar[<span class="num">4</span>] = <span class="num">50</span>;
+<span class="cm">// Each cell is like a variable — can print/access/read/input</span>
+cout &lt;&lt; ar[<span class="num">0</span>] + ar[<span class="num">3</span>]; <span class="cm">// 50</span>
+ar[<span class="num">0</span>] = <span class="num">100</span>; <span class="cm">// modifies first element</span></pre>
+      <div class="warn-box">
+        <h4>⚠ Out-of-Bounds Access</h4>
+        <p>In C++, accessing <code>ar[N]</code> or <code>ar[-1]</code> is <strong>NOT an error</strong> — it gives a <em>random/garbage value</em> from adjacent memory. This is a silent bug!</p>
+        <pre><span class="ty">int</span> ar[<span class="num">3</span>]; ar[<span class="num">0</span>]=<span class="num">10</span>; ar[<span class="num">1</span>]=<span class="num">20</span>; ar[<span class="num">2</span>]=<span class="num">30</span>;
+cout &lt;&lt; ar[<span class="num">3</span>]; <span class="cm">// random value — accessing out of bounds!</span>
+cout &lt;&lt; ar[<span class="num">-1</span>]; <span class="cm">// random value — accessing out of bounds!</span></pre>
+      </div>
+
+      <!-- Interactive indexing demo -->
+      <div class="demo-box">
+        <h4>Interactive Indexing Demo</h4>
+        <div class="demo-controls">
+          <input type="text" id="idx-arr" value="10 20 30 40 50" placeholder="Enter array values">
+          <input type="number" id="idx-idx" value="2" min="0" max="20" style="width:80px" placeholder="index">
+          <button class="btn sm" onclick="demoIndex()">Access ar[i]</button>
+        </div>
+        <div class="demo-array-wrap" id="idx-viz"></div>
+        <div class="demo-output" id="idx-out">Click "Access ar[i]" to see result</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. READING INPUT + LOOPS -->
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">03</span>
+      <span class="topic-title">Reading Input &amp; Loops</span>
+      <span class="topic-meta">cin loop · Sum · Print</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <pre><span class="ty">int</span> n;
+cin &gt;&gt; n;
+<span class="ty">int</span> ar[n];
+<span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;n; i++){
+    cin &gt;&gt; ar[i];
+}
+<span class="cm">// Print all elements</span>
+<span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;n; i++){
+    cout &lt;&lt; ar[i] &lt;&lt; <span class="str">" "</span>;
+}</pre>
+      <p><strong>Sum of all elements:</strong></p>
+      <pre><span class="ty">int</span> ar[<span class="num">5</span>] = {<span class="num">10</span>, <span class="num">20</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>};
+<span class="ty">int</span> sum = <span class="num">0</span>;   <span class="cm">// initialize sum=0 (identity for addition)</span>
+<span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;n; i++){
+    sum = sum + ar[i];
+}
+cout &lt;&lt; sum;</pre>
+    </div>
+  </div>
+
+  <!-- 4. PASSING TO FUNCTIONS -->
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">04</span>
+      <span class="topic-title">Passing Arrays to Functions</span>
+      <span class="topic-meta">Syntax · Pass by Reference · Return</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concept-box">
+        <h4>Key Rule</h4>
+        <p><strong>Arrays are always passed by reference</strong> in C++. The function receives a pointer to the same memory — any changes inside the function affect the original array!</p>
+      </div>
+      <pre><span class="cm">// Passing array to function</span>
+<span class="ty">void</span> <span class="fn">printArray</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N){
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        cout &lt;&lt; ar[i] &lt;&lt; <span class="str">" "</span>;
+    }
+}
+
+<span class="cm">// Returning an int* from function</span>
+<span class="ty">int</span>* <span class="fn">returnArray</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N){
+    <span class="cm">// do processing...</span>
+    <span class="kw">return</span> ar;
+}</pre>
+    </div>
+  </div>
+
+  <!-- 5. MAX / MIN -->
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">05</span>
+      <span class="topic-title">Max &amp; Min in Array</span>
+      <span class="topic-meta">INT_MIN · INT_MAX · Initialization</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="warn-box">
+        <h4>Initialization Rule — CRITICAL</h4>
+        <p>For <strong>Sum</strong> → initialize with 0 (won't affect addition)</p>
+        <p>For <strong>Product</strong> → initialize with 1 (won't affect multiplication)</p>
+        <p>For <strong>Max</strong> → initialize with <em>INT_MIN</em> (smallest int, any element will be larger)</p>
+        <p>For <strong>Min</strong> → initialize with <em>INT_MAX</em> (largest int, any element will be smaller)</p>
+        <p>⚠ Do NOT initialize max with 0 — if all values are negative, max will never update!</p>
+      </div>
+      <div class="grid2">
+        <div>
+          <p><strong>Max Element — TC: O(N), SC: O(1)</strong></p>
+          <pre><span class="kw">#include</span> &lt;climits&gt;
+
+<span class="ty">int</span> <span class="fn">maxArray</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N){
+    <span class="ty">int</span> mx = INT_MIN;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">if</span>(ar[i] > mx){
+            mx = ar[i];
+        }
+    }
+    <span class="kw">return</span> mx;
+}</pre>
+        </div>
+        <div>
+          <p><strong>Min Element — TC: O(N), SC: O(1)</strong></p>
+          <pre><span class="kw">#include</span> &lt;climits&gt;
+
+<span class="ty">int</span> <span class="fn">minArray</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N){
+    <span class="ty">int</span> mn = INT_MAX;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">if</span>(ar[i] &lt; mn){
+            mn = ar[i];
+        }
+    }
+    <span class="kw">return</span> mn;
+}</pre>
+        </div>
+      </div>
+      <div class="demo-box">
+        <h4>Max / Min Demo</h4>
+        <div class="demo-controls">
+          <input type="text" id="mm-arr" value="-10 -20 -30 -7 -8" placeholder="Enter array values">
+          <button class="btn sm" onclick="demoMaxMin()">Find Max &amp; Min</button>
+        </div>
+        <div class="demo-array-wrap" id="mm-viz"></div>
+        <div class="demo-output" id="mm-out">Enter values and click</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. SUM / FREQUENCY / SEARCH -->
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">06</span>
+      <span class="topic-title">Sum · Search k · Frequency of k</span>
+      <span class="topic-meta">Linear Search · Count · O(N)</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="grid2">
+        <div>
+          <p><strong>Sum — TC: O(N), SC: O(1)</strong></p>
+          <pre><span class="ty">int</span> <span class="fn">sum</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N){
+    <span class="ty">int</span> s = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        s = s + ar[i];
+    }
+    <span class="kw">return</span> s;
+}</pre>
+        </div>
+        <div>
+          <p><strong>Frequency of k — TC: O(N), SC: O(1)</strong></p>
+          <pre><span class="ty">int</span> <span class="fn">frequency</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N, <span class="ty">int</span> k){
+    <span class="ty">int</span> c = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">if</span>(ar[i] == k){
+            c++;
+        }
+    }
+    <span class="kw">return</span> c;
+}</pre>
+        </div>
+      </div>
+      <p><strong>Search k — Linear Search</strong></p>
+      <pre><span class="ty">bool</span> <span class="fn">searchK</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N, <span class="ty">int</span> k){
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">if</span>(ar[i] == k) <span class="kw">return true</span>;
+    }
+    <span class="kw">return false</span>;
+}
+<span class="cm">// TC: O(N)  SC: O(1)</span></pre>
+    </div>
+  </div>
+
+  <!-- 7. STRICTLY INCREASING -->
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">07</span>
+      <span class="topic-title">Check Increasing / Strictly Increasing</span>
+      <span class="topic-meta">Compare adjacent · bool return</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concept-box">
+        <h4>Definitions</h4>
+        <p><strong>Increasing Order:</strong> Value can either increase OR remain the same (ar[i] ≥ ar[i-1])</p>
+        <p><strong>Strictly Increasing:</strong> Value must always increase — no repeats allowed (ar[i] &gt; ar[i-1])</p>
+      </div>
+      <p><strong>Idea:</strong> For every element, compare with its previous. If any ar[i] ≤ ar[i-1] (for strict), return false.</p>
+      <pre><span class="ty">bool</span> <span class="fn">isIncreasing</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N){  <span class="cm">// TC:O(N) SC:O(1)</span>
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">1</span>; i&lt;N; i++){   <span class="cm">// i starts from 1!</span>
+        <span class="kw">if</span>(ar[i] &lt; ar[i-<span class="num">1</span>]){  <span class="cm">// prev > curr → not increasing</span>
+            <span class="kw">return false</span>;
+        }
+    }
+    <span class="kw">return true</span>;
+}</pre>
+      <pre><span class="cm">// For vectors — same logic with v.size()</span>
+<span class="ty">bool</span> <span class="fn">isIncreasing</span>(vector&lt;<span class="ty">int</span>&gt; v){
+    <span class="ty">int</span> N = v.size();
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">1</span>; i&lt;N; i++){
+        <span class="kw">if</span>(v[i] &lt;= v[i-<span class="num">1</span>]){  <span class="cm">// strictly: use &lt;= here</span>
+            <span class="kw">return false</span>;
+        }
+    }
+    <span class="kw">return true</span>;
+}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VECTORS ===== -->
+<div id="sec-vectors" class="section">
+  <div class="sec-label">Class 12 — Vectors <span>9 pages</span></div>
+
+  <div class="topic-card">
+    <div class="topic-header open" onclick="toggleTopic(this)">
+      <span class="topic-num">08</span>
+      <span class="topic-title">Drawbacks of Arrays → Vectors</span>
+      <span class="topic-meta">Static vs Dynamic · vector&lt;int&gt;</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body open">
+      <div class="warn-box">
+        <h4>Drawback of Array</h4>
+        <p><strong>Static in nature:</strong> <code>int ar[4]</code> — size is fixed at declaration. We CANNOT increase or decrease the size at runtime.</p>
+      </div>
+      <div class="concept-box">
+        <h4>Vector = Dynamic Array</h4>
+        <p><strong>Vector:</strong> A dynamic array — we CAN increase or decrease size at runtime.</p>
+        <p><strong>Syntax:</strong> <code>vector&lt;type&gt; vname;</code></p>
+        <p>Type can be: int, long, float, double, pair, vector, ...</p>
+        <p><strong>Library:</strong> <code>#include &lt;vector&gt;</code></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">09</span>
+      <span class="topic-title">Vector Built-in Functions</span>
+      <span class="topic-meta">push_back · pop_back · size · indexing</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <table>
+        <tr><th>Function</th><th>What it does</th><th>TC</th></tr>
+        <tr><td><code>v.push_back(ele)</code></td><td>Add element at END of vector</td><td>O(1)*</td></tr>
+        <tr><td><code>v.pop_back()</code></td><td>Remove LAST element</td><td>O(1)</td></tr>
+        <tr><td><code>v.size()</code></td><td>Returns number of elements in vector</td><td>O(1)</td></tr>
+        <tr><td><code>v[i]</code></td><td>Access element at index i (same as array)</td><td>O(1)</td></tr>
+      </table>
+      <pre><span class="ty">vector</span>&lt;<span class="ty">int</span>&gt; v;
+v.push_back(<span class="num">10</span>); <span class="cm">// v = {10}</span>
+v.push_back(<span class="num">20</span>); <span class="cm">// v = {10, 20}</span>
+v.push_back(<span class="num">30</span>); <span class="cm">// v = {10, 20, 30}</span>
+v.push_back(<span class="num">40</span>); <span class="cm">// v = {10, 20, 30, 40}</span>
+
+<span class="ty">int</span> s = v.size();  <span class="cm">// s = 4</span>
+cout &lt;&lt; v[<span class="num">1</span>]; <span class="cm">// 20</span>
+cout &lt;&lt; v[<span class="num">3</span>]; <span class="cm">// 40</span>
+
+v.pop_back(); <span class="cm">// v = {10, 20, 30}</span>
+v.pop_back(); <span class="cm">// v = {10, 20}</span>
+cout &lt;&lt; v.size(); <span class="cm">// 2</span></pre>
+
+      <!-- Interactive vector demo -->
+      <div class="demo-box">
+        <h4>Interactive Vector Demo</h4>
+        <div class="demo-controls">
+          <input type="number" id="vec-val" placeholder="value" style="width:100px">
+          <button class="btn sm green" onclick="demoPushBack()">push_back</button>
+          <button class="btn sm red" onclick="demoPopBack()">pop_back</button>
+          <button class="btn sm" onclick="demoVecSize()">size()</button>
+        </div>
+        <div class="demo-array-wrap" id="vec-viz"><em style="color:var(--muted);font-size:13px">Vector is empty</em></div>
+        <div class="demo-output" id="vec-out">Use push_back to add elements</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">10</span>
+      <span class="topic-title">Passing Vector to Functions &amp; Returning Vector</span>
+      <span class="topic-meta">vector&lt;int&gt; param · return type</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <pre><span class="cm">// Passing vector to function</span>
+<span class="ty">void</span> <span class="fn">printVector</span>(vector&lt;<span class="ty">int</span>&gt; a){
+    <span class="ty">int</span> N = a.size();
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        cout &lt;&lt; a[i];
+    }
+}
+
+<span class="cm">// Return type is vector&lt;int&gt;</span>
+vector&lt;<span class="ty">int</span>&gt; <span class="fn">increaseByOne</span>(vector&lt;<span class="ty">int</span>&gt; v){
+    <span class="ty">int</span> N = v.size();
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        v[i] = v[i] + <span class="num">1</span>;
+    }
+    <span class="kw">return</span> v;
+}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REVERSE ===== -->
+<div id="sec-reverse" class="section">
+  <div class="sec-label">Class 13 — Reverse Array/Vector <span>8 pages</span></div>
+
+  <div class="topic-card">
+    <div class="topic-header open" onclick="toggleTopic(this)">
+      <span class="topic-num">11</span>
+      <span class="topic-title">Reverse Part of Vector [l, r]</span>
+      <span class="topic-meta">Two pointers · Swap · While loop</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body open">
+      <div class="concept-box">
+        <h4>Problem</h4>
+        <p>Given vector v, l and r: reverse vector from index l to r and return it.</p>
+        <p>Constraints: 0 ≤ l ≤ r &lt; N, 1 ≤ N ≤ 10⁵</p>
+      </div>
+      <p>Example: v[8] = {10,20,25,30,12,14,16,29}, l=2, r=5</p>
+      <div class="demo-array-wrap">
+        <div class="array-viz">
+          <div class="array-cell"><span class="idx">0</span>10</div>
+          <div class="array-cell"><span class="idx">1</span>20</div>
+          <div class="array-cell hl"><span class="idx">2↑l</span>25</div>
+          <div class="array-cell hl"><span class="idx">3</span>30</div>
+          <div class="array-cell hl"><span class="idx">4</span>12</div>
+          <div class="array-cell hl"><span class="idx">5↑r</span>14</div>
+          <div class="array-cell"><span class="idx">6</span>16</div>
+          <div class="array-cell"><span class="idx">7</span>29</div>
+        </div>
+      </div>
+      <p>After reversing [l..r]: {10, 20, <strong>14, 12, 30, 25</strong>, 16, 29}</p>
+      <div class="concept-box">
+        <h4>Idea</h4>
+        <p>Swap 1st element with last, 2nd with 2nd-last, 3rd with 3rd-last...</p>
+        <p>Use two pointers: l++ and r-- until l &gt; r</p>
+      </div>
+      <pre><span class="cm">// Iterative — TC: O(N), SC: O(1)</span>
+vector&lt;<span class="ty">int</span>&gt; <span class="fn">reverse</span>(vector&lt;<span class="ty">int</span>&gt; v, <span class="ty">int</span> l, <span class="ty">int</span> r){
+    <span class="kw">while</span>(l &lt;= r){
+        <span class="ty">int</span> t = v[l];
+        v[l] = v[r];
+        v[r] = t;
+        l++;
+        r--;
+    }
+    <span class="kw">return</span> v;
+}
+<span class="cm">// Call: reverse(v, 0, N-1) to reverse entire vector</span></pre>
+      <div class="demo-box">
+        <h4>Interactive Reverse Demo</h4>
+        <div class="demo-controls">
+          <input type="text" id="rev-arr" value="10 20 25 30 12 14 16 29" placeholder="Array values">
+          <input type="number" id="rev-l" value="2" style="width:60px" placeholder="l">
+          <input type="number" id="rev-r" value="5" style="width:60px" placeholder="r">
+          <button class="btn sm" onclick="demoReverse()">Reverse [l, r]</button>
+        </div>
+        <div class="demo-array-wrap" id="rev-viz"></div>
+        <div class="demo-output" id="rev-out">Enter values and click</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">12</span>
+      <span class="topic-title">Rotate Array Right-to-Left Once</span>
+      <span class="topic-meta">Store last · shift right · place at 0</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concept-box">
+        <h4>Rotation (Right to Left)</h4>
+        <p>Last element moves to index 0. All others shift one position right.</p>
+        <p>{10, 20, 30, 40, 50} → {50, 10, 20, 30, 40}</p>
+      </div>
+      <pre><span class="cm">// TC: O(N), SC: O(1)</span>
+vector&lt;<span class="ty">int</span>&gt; <span class="fn">rotate</span>(vector&lt;<span class="ty">int</span>&gt; v){
+    <span class="ty">int</span> N = v.size();
+    <span class="ty">int</span> t = v[N-<span class="num">1</span>]; <span class="cm">// store last element</span>
+    <span class="kw">for</span>(<span class="ty">int</span> i=N-<span class="num">1</span>; i&gt;<span class="num">0</span>; i--){  <span class="cm">// i: [N-1..1]</span>
+        v[i] = v[i-<span class="num">1</span>]; <span class="cm">// shift right</span>
+    }
+    v[<span class="num">0</span>] = t; <span class="cm">// place saved element at front</span>
+    <span class="kw">return</span> v;
+}</pre>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">13</span>
+      <span class="topic-title">2nd Smallest Element</span>
+      <span class="topic-meta">Track min &amp; second min</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <p>Given v[9] = {4, 6, 7, 2, 9, 3, 10, 5, 12}</p>
+      <div class="concept-box">
+        <h4>Idea</h4>
+        <p>Track two variables: <strong>min1</strong> (smallest) and <strong>min2</strong> (2nd smallest).</p>
+        <p>For each element: if smaller than min1, update both. If between min1 and min2, update min2.</p>
+      </div>
+      <pre><span class="ty">int</span> <span class="fn">secondSmallest</span>(vector&lt;<span class="ty">int</span>&gt; v){
+    <span class="ty">int</span> N = v.size();
+    <span class="ty">int</span> min1 = INT_MAX, min2 = INT_MAX;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">if</span>(v[i] &lt; min1){
+            min2 = min1;
+            min1 = v[i];
+        } <span class="kw">else if</span>(v[i] &lt; min2 && v[i] != min1){
+            min2 = v[i];
+        }
+    }
+    <span class="kw">return</span> min2;
+}
+<span class="cm">// TC: O(N), SC: O(1)</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ROTATE ===== -->
+<div id="sec-rotate" class="section">
+  <div class="sec-label">Class 14 — Rotate Array k Times <span>8 pages</span></div>
+
+  <div class="topic-card">
+    <div class="topic-header open" onclick="toggleTopic(this)">
+      <span class="topic-num">14</span>
+      <span class="topic-title">Rotate k Times — Brute Force</span>
+      <span class="topic-meta">O(N×k) · Nested loops</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body open">
+      <div class="concept-box">
+        <h4>Problem</h4>
+        <p>Given vector v[N] and k, rotate it k times from right to left.</p>
+        <p>Example: v=[10,20,30,40,50,60,70], k=3 → [50,60,70,10,20,30,40]</p>
+      </div>
+      <p><strong>Brute Force Idea:</strong> Loop k times, each time rotate once.</p>
+      <pre><span class="cm">// Brute Force — TC: O(N×k), SC: O(1)</span>
+vector&lt;<span class="ty">int</span>&gt; <span class="fn">rotateK</span>(vector&lt;<span class="ty">int</span>&gt; v, <span class="ty">int</span> k){
+    <span class="ty">int</span> N = v.size();
+    <span class="kw">for</span>(<span class="ty">int</span> l=<span class="num">1</span>; l&lt;=k; l++){  <span class="cm">// outer loop: k times</span>
+        <span class="ty">int</span> t = v[N-<span class="num">1</span>];
+        <span class="kw">for</span>(<span class="ty">int</span> i=N-<span class="num">1</span>; i&gt;<span class="num">0</span>; i--){  <span class="cm">// inner: N-1 iters</span>
+            v[i] = v[i-<span class="num">1</span>];
+        }
+        v[<span class="num">0</span>] = t;
+    }
+    <span class="kw">return</span> v;
+}
+<span class="cm">// Total = k × (N-1) = O(kN) — TLE if N=k=10^5!</span></pre>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">15</span>
+      <span class="topic-title">Rotate k Times — Optimized (3-Step Reverse)</span>
+      <span class="topic-meta">O(N) · Observation-based · Elegant</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="tip-box">
+        <h4>Key Observation</h4>
+        <p>After rotating k times, the <strong>last k elements move to start</strong> and <strong>first N-k elements move to end</strong>.</p>
+        <p>v[N] with k rotations → [v[N-k]..v[N-1]] + [v[0]..v[N-k-1]]</p>
+      </div>
+      <div class="concept-box">
+        <h4>3-Step Algorithm — TC: O(N), SC: O(1)</h4>
+        <p>Step 1: Reverse ENTIRE array (indices 0..N-1)</p>
+        <p>Step 2: Reverse FIRST k elements (indices 0..k-1)</p>
+        <p>Step 3: Reverse REMAINING elements (indices k..N-1)</p>
+      </div>
+      <p>Example: v=[10,20,30,40,50,60,70], k=3</p>
+      <div class="demo-array-wrap">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;font-family:'JetBrains Mono',monospace">Step 1: Reverse all</div>
+        <div class="array-viz">
+          <div class="array-cell"><span class="idx">0</span>70</div>
+          <div class="array-cell"><span class="idx">1</span>60</div>
+          <div class="array-cell"><span class="idx">2</span>50</div>
+          <div class="array-cell"><span class="idx">3</span>40</div>
+          <div class="array-cell"><span class="idx">4</span>30</div>
+          <div class="array-cell"><span class="idx">5</span>20</div>
+          <div class="array-cell"><span class="idx">6</span>10</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin:10px 0 6px;font-family:'JetBrains Mono',monospace">Step 2: Reverse first k=3</div>
+        <div class="array-viz">
+          <div class="array-cell hl"><span class="idx">0</span>50</div>
+          <div class="array-cell hl"><span class="idx">1</span>60</div>
+          <div class="array-cell hl"><span class="idx">2</span>70</div>
+          <div class="array-cell"><span class="idx">3</span>40</div>
+          <div class="array-cell"><span class="idx">4</span>30</div>
+          <div class="array-cell"><span class="idx">5</span>20</div>
+          <div class="array-cell"><span class="idx">6</span>10</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin:10px 0 6px;font-family:'JetBrains Mono',monospace">Step 3: Reverse rest [k..N-1]</div>
+        <div class="array-viz">
+          <div class="array-cell hl"><span class="idx">0</span>50</div>
+          <div class="array-cell hl"><span class="idx">1</span>60</div>
+          <div class="array-cell hl"><span class="idx">2</span>70</div>
+          <div class="array-cell hl2"><span class="idx">3</span>10</div>
+          <div class="array-cell hl2"><span class="idx">4</span>20</div>
+          <div class="array-cell hl2"><span class="idx">5</span>30</div>
+          <div class="array-cell hl2"><span class="idx">6</span>40</div>
+        </div>
+      </div>
+      <pre><span class="cm">// Optimized — TC: O(N), SC: O(1)</span>
+vector&lt;<span class="ty">int</span>&gt; <span class="fn">rotateKOpt</span>(vector&lt;<span class="ty">int</span>&gt; v, <span class="ty">int</span> k){
+    <span class="ty">int</span> N = v.size();
+    <span class="fn">reverse</span>(v, <span class="num">0</span>, N-<span class="num">1</span>);    <span class="cm">// Step 1: reverse all</span>
+    <span class="fn">reverse</span>(v, <span class="num">0</span>, k-<span class="num">1</span>);    <span class="cm">// Step 2: reverse first k</span>
+    <span class="fn">reverse</span>(v, k, N-<span class="num">1</span>);    <span class="cm">// Step 3: reverse rest</span>
+    <span class="kw">return</span> v;
+}</pre>
+      <div class="demo-box">
+        <h4>Rotation Demo</h4>
+        <div class="demo-controls">
+          <input type="text" id="rot-arr" value="10 20 30 40 50 60 70" placeholder="Array values">
+          <input type="number" id="rot-k" value="3" style="width:70px" placeholder="k">
+          <button class="btn sm" onclick="demoRotate()">Rotate k times</button>
+        </div>
+        <div class="demo-array-wrap" id="rot-viz"></div>
+        <div class="demo-output" id="rot-out">Enter values and click</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PASS BY REF ===== -->
+<div id="sec-pbr" class="section">
+  <div class="sec-label">Class 15 — Pass by Value vs Reference <span>10 pages</span></div>
+
+  <div class="topic-card">
+    <div class="topic-header open" onclick="toggleTopic(this)">
+      <span class="topic-num">16</span>
+      <span class="topic-title">Pass by Value vs Pass by Reference</span>
+      <span class="topic-meta">Memory · Stack · Heap · Arrays always PBR</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body open">
+      <div class="grid2">
+        <div class="warn-box">
+          <h4>Pass by Value</h4>
+          <p>A COPY of the value is made. Modifying in function does NOT affect original.</p>
+          <p>Used for: int, float, char, double (primitives)</p>
+        </div>
+        <div class="tip-box">
+          <h4>Pass by Reference</h4>
+          <p>The function receives a POINTER to the same memory. Modifications affect original!</p>
+          <p>Used for: arrays (always PBR in C++)</p>
+        </div>
+      </div>
+      <pre><span class="ty">void</span> <span class="fn">changed</span>(<span class="ty">int</span> cp[]){  <span class="cm">// cp is a pointer to ar's memory</span>
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;<span class="num">5</span>; i++){
+        cp[i] = cp[i] + <span class="num">1</span>;
+    }
+}
+
+<span class="ty">int</span> <span class="fn">main</span>(){
+    <span class="ty">int</span> ar[<span class="num">5</span>]; ar[<span class="num">0</span>]=<span class="num">10</span>; ar[<span class="num">1</span>]=<span class="num">20</span>; ar[<span class="num">2</span>]=<span class="num">30</span>; ar[<span class="num">3</span>]=<span class="num">40</span>; ar[<span class="num">4</span>]=<span class="num">50</span>;
+    changed(ar);  <span class="cm">// modifies the ORIGINAL ar!</span>
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;<span class="num">5</span>; i++) cout &lt;&lt; ar[i] &lt;&lt; <span class="str">" "</span>;
+    <span class="cm">// Output: 11 21 31 41 51</span>
+}</pre>
+      <div class="concept-box">
+        <h4>Analogy</h4>
+        <p><strong>Pass by Value:</strong> Photocopy of a document — writing on it doesn't affect the original.</p>
+        <p><strong>Pass by Reference:</strong> Another NAME for the same box — "ar" and "cp" refer to the same memory.</p>
+      </div>
+      <div class="tc-row">
+        <span class="tc-badge">TC: O(1)</span>
+        <span class="tc-badge">SC: O(1)</span>
+        <span class="tc-badge">Arrays always PBR</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADVANCED ===== -->
+<div id="sec-advanced" class="section">
+  <div class="sec-label">Classes 16 &amp; 17 — Advanced Problems <span>17 pages</span></div>
+
+  <div class="topic-card">
+    <div class="topic-header open" onclick="toggleTopic(this)">
+      <span class="topic-num">17</span>
+      <span class="topic-title">Elements Greater Than Itself</span>
+      <span class="topic-meta">Nested loops · O(N²) · Count</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body open">
+      <div class="concept-box">
+        <h4>Problem (Class 16)</h4>
+        <p>Given ar[N]: return count of elements where there exists at least one element greater than ar[i] in the array.</p>
+        <p>Example: ar = {7,3,10,8,9,10,6} → ans = 5 (10 and 10 have none, 3,6,7,8,9 each have something greater)</p>
+      </div>
+      <div class="concept-box">
+        <h4>Idea</h4>
+        <p>For every ar[i], iterate and check if any element &gt; ar[i] exists. If yes, c++.</p>
+      </div>
+      <pre><span class="ty">int</span> <span class="fn">countGTSelf</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N){
+    <span class="ty">int</span> c = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">for</span>(<span class="ty">int</span> j=<span class="num">0</span>; j&lt;N; j++){
+            <span class="kw">if</span>(ar[j] > ar[i]){
+                c++;
+                <span class="kw">break</span>; <span class="cm">// found one, move to next i</span>
+            }
+        }
+    }
+    <span class="kw">return</span> c;
+}
+<span class="cm">// TC: O(N²), SC: O(1)</span></pre>
+      <div class="tip-box">
+        <h4>Optimization Hint</h4>
+        <p>Find the max of the array. Count of elements NOT equal to max = answer. TC: O(N)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">18</span>
+      <span class="topic-title">Count Unique Elements</span>
+      <span class="topic-meta">Sorted · Adjacent check · O(N)</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concept-box">
+        <h4>Problem (Class 16)</h4>
+        <p>Count the number of unique/distinct elements in the array.</p>
+      </div>
+      <pre><span class="cm">// After sorting — TC: O(N log N), SC: O(1)</span>
+<span class="ty">int</span> <span class="fn">countUnique</span>(vector&lt;<span class="ty">int</span>&gt; v){
+    <span class="ty">int</span> N = v.size();
+    sort(v.begin(), v.end());
+    <span class="ty">int</span> cnt = <span class="num">1</span>;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">1</span>; i&lt;N; i++){
+        <span class="kw">if</span>(v[i] != v[i-<span class="num">1</span>]){
+            cnt++;
+        }
+    }
+    <span class="kw">return</span> cnt;
+}</pre>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">19</span>
+      <span class="topic-title">Count Pairs with Sum = k</span>
+      <span class="topic-meta">Nested loops · O(N²) · Class 17</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concept-box">
+        <h4>Problem (Class 17)</h4>
+        <p>Count pairs (i, j) where i &lt; j and ar[i] + ar[j] == k.</p>
+      </div>
+      <pre><span class="ty">int</span> <span class="fn">countPairs</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N, <span class="ty">int</span> k){
+    <span class="ty">int</span> cnt = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">for</span>(<span class="ty">int</span> j=i+<span class="num">1</span>; j&lt;N; j++){
+            <span class="kw">if</span>(ar[i] + ar[j] == k){
+                cnt++;
+            }
+        }
+    }
+    <span class="kw">return</span> cnt;
+}
+<span class="cm">// TC: O(N²), SC: O(1)</span></pre>
+      <div class="demo-box">
+        <h4>Pairs with Sum Demo</h4>
+        <div class="demo-controls">
+          <input type="text" id="pair-arr" value="1 5 7 1 5" placeholder="Array values">
+          <input type="number" id="pair-k" value="6" style="width:70px" placeholder="k">
+          <button class="btn sm" onclick="demoPairs()">Count Pairs</button>
+        </div>
+        <div class="demo-array-wrap" id="pair-viz"></div>
+        <div class="demo-output" id="pair-out">Enter values and click</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">20</span>
+      <span class="topic-title">Count Triplets: ar[i] &lt; ar[j] &lt; ar[k]</span>
+      <span class="topic-meta">Triple nested loop · O(N³) · Class 17</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concept-box">
+        <h4>Problem (Class 17)</h4>
+        <p>Count triplets (i, j, k) where i &lt; j &lt; k and ar[i] &lt; ar[j] &lt; ar[k].</p>
+      </div>
+      <pre><span class="ty">int</span> <span class="fn">countTriplets</span>(<span class="ty">int</span> ar[], <span class="ty">int</span> N){
+    <span class="ty">int</span> cnt = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">for</span>(<span class="ty">int</span> j=i+<span class="num">1</span>; j&lt;N; j++){
+            <span class="kw">if</span>(ar[j] > ar[i]){
+                <span class="kw">for</span>(<span class="ty">int</span> k=j+<span class="num">1</span>; k&lt;N; k++){
+                    <span class="kw">if</span>(ar[k] > ar[j]){
+                        cnt++;
+                    }
+                }
+            }
+        }
+    }
+    <span class="kw">return</span> cnt;
+}
+<span class="cm">// TC: O(N³), SC: O(1)</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 2D MATRIX ===== -->
+<div id="sec-matrix" class="section">
+  <div class="sec-label">Classes 18 &amp; 19 — 2D Matrix <span>15 pages</span></div>
+
+  <div class="topic-card">
+    <div class="topic-header open" onclick="toggleTopic(this)">
+      <span class="topic-num">21</span>
+      <span class="topic-title">2D Matrix Introduction</span>
+      <span class="topic-meta">Declaration · Indexing · vector&lt;vector&lt;int&gt;&gt;</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body open">
+      <div class="concept-box">
+        <h4>Matrix Syntax</h4>
+        <p><strong>Static:</strong> <code>&lt;datatype&gt; name[rows][cols];</code></p>
+        <p><strong>Dynamic:</strong> <code>vector&lt;vector&lt;int&gt;&gt; mat;</code></p>
+      </div>
+      <p>For <code>int mat[N][M]</code>: N rows (horizontal), M columns (vertical)</p>
+      <p>To access: <code>mat[i][j]</code> = row i, column j</p>
+      <p>Iterate a row → col changes [0..M-1], row stays</p>
+      <p>Iterate a column → row changes [0..N-1], col stays</p>
+
+      <div style="margin: 16px 0;">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace">int mat[3][4] — hover rows/cols:</p>
+        <div class="matrix-viz" id="mat-demo">
+          <div class="matrix-row">
+            <div class="matrix-cell" data-r="0" data-c="0">1</div><div class="matrix-cell" data-r="0" data-c="1">2</div><div class="matrix-cell" data-r="0" data-c="2">3</div><div class="matrix-cell" data-r="0" data-c="3">4</div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell" data-r="1" data-c="0">5</div><div class="matrix-cell" data-r="1" data-c="1">6</div><div class="matrix-cell" data-r="1" data-c="2">7</div><div class="matrix-cell" data-r="1" data-c="3">8</div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell" data-r="2" data-c="0">9</div><div class="matrix-cell" data-r="2" data-c="1">10</div><div class="matrix-cell" data-r="2" data-c="2">11</div><div class="matrix-cell" data-r="2" data-c="3">12</div>
+          </div>
+        </div>
+      </div>
+
+      <pre><span class="ty">int</span> mat[<span class="num">3</span>][<span class="num">4</span>];
+mat[<span class="num">1</span>][<span class="num">1</span>] = <span class="num">10</span>;  <span class="cm">// row=1, col=1</span>
+mat[<span class="num">2</span>][<span class="num">1</span>] = <span class="num">20</span>;  <span class="cm">// row=2, col=1</span>
+mat[<span class="num">2</span>][<span class="num">3</span>] = <span class="num">40</span>;  <span class="cm">// row=2, col=3</span></pre>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">22</span>
+      <span class="topic-title">Row Sum &amp; Column Sum</span>
+      <span class="topic-meta">Nested loops · O(N×M)</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="grid2">
+        <div>
+          <p><strong>Row-by-row Sum — TC: O(N×M)</strong></p>
+          <pre><span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+    <span class="ty">int</span> rowSum = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="ty">int</span> j=<span class="num">0</span>; j&lt;M; j++){
+        rowSum += mat[i][j];
+    }
+    cout &lt;&lt; <span class="str">"Row "</span> &lt;&lt; i 
+         &lt;&lt; <span class="str">": "</span> &lt;&lt; rowSum;
+}</pre>
+        </div>
+        <div>
+          <p><strong>Column-by-column Sum — TC: O(N×M)</strong></p>
+          <pre><span class="kw">for</span>(<span class="ty">int</span> j=<span class="num">0</span>; j&lt;M; j++){
+    <span class="ty">int</span> colSum = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        colSum += mat[i][j];
+    }
+    cout &lt;&lt; <span class="str">"Col "</span> &lt;&lt; j 
+         &lt;&lt; <span class="str">": "</span> &lt;&lt; colSum;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">23</span>
+      <span class="topic-title">Transpose of Matrix</span>
+      <span class="topic-meta">Rectangular · Square · In-place · Class 19</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concept-box">
+        <h4>What is Transpose?</h4>
+        <p>Transpose of mat[i][j] = mat[j][i]. Rows become columns, columns become rows.</p>
+        <p>For N×M matrix → Transpose is M×N matrix.</p>
+      </div>
+      <div class="grid2">
+        <div>
+          <p><strong>Rectangular Matrix — TC: O(N×M), SC: O(N×M)</strong></p>
+          <pre><span class="cm">// Need new matrix for rectangular</span>
+vector&lt;vector&lt;<span class="ty">int</span>&gt;&gt; <span class="fn">transpose</span>(
+    vector&lt;vector&lt;<span class="ty">int</span>&gt;&gt; mat, 
+    <span class="ty">int</span> N, <span class="ty">int</span> M)
+{
+    vector&lt;vector&lt;<span class="ty">int</span>&gt;&gt; res(M, 
+        vector&lt;<span class="ty">int</span>&gt;(N));
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++)
+        <span class="kw">for</span>(<span class="ty">int</span> j=<span class="num">0</span>; j&lt;M; j++)
+            res[j][i] = mat[i][j];
+    <span class="kw">return</span> res;
+}</pre>
+        </div>
+        <div>
+          <p><strong>Square Matrix — In-place TC: O(N²), SC: O(1)</strong></p>
+          <pre><span class="cm">// Only swap upper triangle!</span>
+<span class="ty">void</span> <span class="fn">transposeSquare</span>(
+    vector&lt;vector&lt;<span class="ty">int</span>&gt;&gt;&amp; mat, <span class="ty">int</span> N)
+{
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">for</span>(<span class="ty">int</span> j=i+<span class="num">1</span>; j&lt;N; j++){
+            swap(mat[i][j], mat[j][i]);
+        }
+    }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">24</span>
+      <span class="topic-title">Rotate Matrix by 90°</span>
+      <span class="topic-meta">Transpose + Reverse rows · O(N²)</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="tip-box">
+        <h4>Algorithm (Class 19)</h4>
+        <p>Step 1: Transpose the square matrix (swap mat[i][j] with mat[j][i])</p>
+        <p>Step 2: Reverse each row</p>
+        <p>Result = 90° clockwise rotation!</p>
+      </div>
+      <pre><span class="cm">// Rotate 90° clockwise — TC: O(N²), SC: O(1)</span>
+<span class="ty">void</span> <span class="fn">rotate90</span>(vector&lt;vector&lt;<span class="ty">int</span>&gt;&gt;&amp; mat, <span class="ty">int</span> N){
+    <span class="cm">// Step 1: Transpose</span>
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++)
+        <span class="kw">for</span>(<span class="ty">int</span> j=i+<span class="num">1</span>; j&lt;N; j++)
+            swap(mat[i][j], mat[j][i]);
+    <span class="cm">// Step 2: Reverse each row</span>
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++)
+        reverse(mat[i].begin(), mat[i].end());
+}</pre>
+    </div>
+  </div>
+
+  <div class="topic-card">
+    <div class="topic-header" onclick="toggleTopic(this)">
+      <span class="topic-num">25</span>
+      <span class="topic-title">Passing 2D Matrix to Functions</span>
+      <span class="topic-meta">vector&lt;vector&lt;int&gt;&gt; · Reference</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <pre><span class="cm">// Passing 2D vector to function</span>
+<span class="ty">void</span> <span class="fn">printMatrix</span>(vector&lt;vector&lt;<span class="ty">int</span>&gt;&gt; mat){
+    <span class="ty">int</span> N = mat.size();
+    <span class="ty">int</span> M = mat[<span class="num">0</span>].size();
+    <span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;N; i++){
+        <span class="kw">for</span>(<span class="ty">int</span> j=<span class="num">0</span>; j&lt;M; j++){
+            cout &lt;&lt; mat[i][j] &lt;&lt; <span class="str">" "</span>;
+        }
+        cout &lt;&lt; <span class="str">"\n"</span>;
+    }
+}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PLAYGROUND ===== -->
+<div id="sec-playground" class="section">
+  <div class="sec-label">Interactive Playground <span>All concepts</span></div>
+
+  <div class="demo-box" style="margin-bottom:24px">
+    <h4>Quick Reference — Time Complexities</h4>
+    <table>
+      <tr><th>Algorithm</th><th>Time</th><th>Space</th><th>Class</th></tr>
+      <tr><td>Sum / Print / Search / Frequency</td><td>O(N)</td><td>O(1)</td><td>10.5</td></tr>
+      <tr><td>Max / Min Element</td><td>O(N)</td><td>O(1)</td><td>10.5</td></tr>
+      <tr><td>Check Increasing</td><td>O(N)</td><td>O(1)</td><td>10.5 / 12</td></tr>
+      <tr><td>Reverse [l, r]</td><td>O(N)</td><td>O(1)</td><td>13</td></tr>
+      <tr><td>Rotate once</td><td>O(N)</td><td>O(1)</td><td>13</td></tr>
+      <tr><td>Rotate k (brute force)</td><td>O(N×k)</td><td>O(1)</td><td>14</td></tr>
+      <tr><td>Rotate k (3-step reverse)</td><td>O(N)</td><td>O(1)</td><td>14</td></tr>
+      <tr><td>Count pairs sum=k</td><td>O(N²)</td><td>O(1)</td><td>17</td></tr>
+      <tr><td>Count triplets</td><td>O(N³)</td><td>O(1)</td><td>17</td></tr>
+      <tr><td>Row/Col sum of matrix</td><td>O(N×M)</td><td>O(1)</td><td>18</td></tr>
+      <tr><td>Transpose rectangular</td><td>O(N×M)</td><td>O(N×M)</td><td>19</td></tr>
+      <tr><td>Transpose square (in-place)</td><td>O(N²)</td><td>O(1)</td><td>19</td></tr>
+      <tr><td>Rotate matrix 90°</td><td>O(N²)</td><td>O(1)</td><td>19</td></tr>
+    </table>
+  </div>
+
+  <div class="demo-box">
+    <h4>All-in-One Array Operations</h4>
+    <div class="demo-controls">
+      <input type="text" id="pg-arr" value="3 1 4 1 5 9 2 6 5" placeholder="Enter array values (space-separated)">
+      <input type="number" id="pg-k" value="4" style="width:70px" placeholder="k value">
+      <button class="btn sm" onclick="demoAll()">Run All Operations</button>
+    </div>
+    <div class="demo-array-wrap" id="pg-viz"></div>
+    <div id="pg-results" style="margin-top:14px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// ---- TAB SWITCHING ----
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const sec = document.getElementById('sec-' + name);
+  if (sec) sec.classList.add('active');
+  const tabs = ['basics','vectors','reverse','rotate','pbr','advanced','matrix','playground'];
+  const idx = tabs.indexOf(name);
+  document.querySelectorAll('.nav-tab')[idx]?.classList.add('active');
+}
+
+function filterSection(cls) {}
+
+// ---- TOPIC TOGGLE ----
+function toggleTopic(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ---- ARRAY RENDER ----
+function renderArray(arr, container, highlights) {
+  highlights = highlights || {};
+  const wrap = document.createElement('div');
+  wrap.className = 'array-viz';
+  arr.forEach((v, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'array-cell' + (highlights[i] ? ' ' + highlights[i] : '');
+    const idx = document.createElement('span');
+    idx.className = 'idx';
+    idx.textContent = i;
+    cell.appendChild(idx);
+    cell.appendChild(document.createTextNode(v));
+    wrap.appendChild(cell);
+  });
+  container.innerHTML = '';
+  container.appendChild(wrap);
+}
+
+function parseArr(id) {
+  return document.getElementById(id).value.trim().split(/\s+/).map(Number).filter(x => !isNaN(x));
+}
+
+// ---- DEMO: INDEXING ----
+function demoIndex() {
+  const arr = parseArr('idx-arr');
+  const idx = parseInt(document.getElementById('idx-idx').value);
+  const viz = document.getElementById('idx-viz');
+  const out = document.getElementById('idx-out');
+  const hl = {};
+  if (idx >= 0 && idx < arr.length) hl[idx] = 'hl';
+  renderArray(arr, viz, hl);
+  if (idx < 0 || idx >= arr.length) {
+    out.innerHTML = `⚠ ar[${idx}] = OUT OF BOUNDS (0 to ${arr.length-1} valid) → random/garbage value!`;
+    out.style.color = '#f43f5e';
+  } else {
+    out.innerHTML = `ar[${idx}] = ${arr[idx]}`;
+    out.style.color = 'var(--accent2)';
+  }
+}
+
+// ---- DEMO: MAX MIN ----
+function demoMaxMin() {
+  const arr = parseArr('mm-arr');
+  const viz = document.getElementById('mm-viz');
+  const out = document.getElementById('mm-out');
+  if (!arr.length) return;
+  const max = Math.max(...arr);
+  const min = Math.min(...arr);
+  const hl = {};
+  arr.forEach((v, i) => {
+    if (v === max) hl[i] = 'hl2';
+    if (v === min) hl[i] = 'hl3';
+  });
+  renderArray(arr, viz, hl);
+  out.innerHTML = `MAX = ${max} (green) | MIN = ${min} (red) | Sum = ${arr.reduce((a,b)=>a+b,0)}`;
+  out.style.color = 'var(--accent2)';
+}
+
+// ---- VECTOR DEMO ----
+let vecArr = [];
+function renderVec() {
+  const viz = document.getElementById('vec-viz');
+  const out = document.getElementById('vec-out');
+  if (!vecArr.length) { viz.innerHTML = '<em style="color:var(--muted);font-size:13px">Vector is empty</em>'; return; }
+  renderArray(vecArr, viz, {});
+  out.textContent = `size() = ${vecArr.length}`;
+  out.style.color = 'var(--accent2)';
+}
+function demoPushBack() {
+  const v = document.getElementById('vec-val').value.trim();
+  if (v === '') return;
+  vecArr.push(Number(v));
+  document.getElementById('vec-out').textContent = `push_back(${v}) → size now = ${vecArr.length}`;
+  renderVec();
+}
+function demoPopBack() {
+  if (!vecArr.length) { document.getElementById('vec-out').textContent = 'Vector is empty!'; return; }
+  const rem = vecArr.pop();
+  document.getElementById('vec-out').textContent = `pop_back() removed ${rem} → size now = ${vecArr.length}`;
+  renderVec();
+}
+function demoVecSize() {
+  document.getElementById('vec-out').textContent = `size() = ${vecArr.length}`;
+}
+
+// ---- DEMO: REVERSE ----
+function demoReverse() {
+  const arr = parseArr('rev-arr');
+  let l = parseInt(document.getElementById('rev-l').value);
+  let r = parseInt(document.getElementById('rev-r').value);
+  const viz = document.getElementById('rev-viz');
+  const out = document.getElementById('rev-out');
+  if (l < 0 || r >= arr.length || l > r) {
+    out.textContent = 'Invalid l/r values!'; return;
+  }
+  const orig = [...arr];
+  const rev = [...arr];
+  let ll = l, rr = r;
+  while (ll <= rr) {
+    [rev[ll], rev[rr]] = [rev[rr], rev[ll]];
+    ll++; rr--;
+  }
+  const hl = {};
+  for (let i = l; i <= r; i++) hl[i] = 'hl';
+  renderArray(rev, viz, hl);
+  out.innerHTML = `Before: [${orig.join(', ')}]\nAfter reverse [${l},${r}]: [${rev.join(', ')}]`;
+  out.style.color = 'var(--accent2)';
+}
+
+// ---- DEMO: ROTATE ----
+function demoRotate() {
+  const arr = parseArr('rot-arr');
+  let k = parseInt(document.getElementById('rot-k').value);
+  const viz = document.getElementById('rot-viz');
+  const out = document.getElementById('rot-out');
+  const N = arr.length;
+  if (!N || isNaN(k)) return;
+  k = ((k % N) + N) % N;
+  // 3-step reverse
+  const rev = [...arr];
+  const reverseRange = (a, l, r) => {
+    while (l < r) { [a[l], a[r]] = [a[r], a[l]]; l++; r--; }
+  };
+  reverseRange(rev, 0, N - 1);
+  reverseRange(rev, 0, k - 1);
+  reverseRange(rev, k, N - 1);
+  const hl = {};
+  for (let i = 0; i < k; i++) hl[i] = 'hl';
+  for (let i = k; i < N; i++) hl[i] = 'hl2';
+  renderArray(rev, viz, hl);
+  out.innerHTML = `Original: [${arr.join(', ')}]\nRotated (k=${document.getElementById('rot-k').value}): [${rev.join(', ')}]`;
+  out.style.color = 'var(--accent2)';
+}
+
+// ---- DEMO: PAIRS ----
+function demoPairs() {
+  const arr = parseArr('pair-arr');
+  const k = parseInt(document.getElementById('pair-k').value);
+  const viz = document.getElementById('pair-viz');
+  const out = document.getElementById('pair-out');
+  let cnt = 0;
+  const pairs = [];
+  const hl = {};
+  for (let i = 0; i < arr.length; i++)
+    for (let j = i+1; j < arr.length; j++)
+      if (arr[i] + arr[j] === k) { cnt++; pairs.push(`(${i},${j})`); hl[i]='hl'; hl[j]='hl'; }
+  renderArray(arr, viz, hl);
+  out.innerHTML = `Pairs with sum=${k}: ${cnt}\nPairs at indices: ${pairs.join(', ') || 'none'}`;
+  out.style.color = 'var(--accent2)';
+}
+
+// ---- DEMO: ALL ----
+function demoAll() {
+  const arr = parseArr('pg-arr');
+  const k = parseInt(document.getElementById('pg-k').value) || 0;
+  if (!arr.length) return;
+  const N = arr.length;
+  const viz = document.getElementById('pg-viz');
+  renderArray(arr, viz, {});
+  const res = document.getElementById('pg-results');
+  const max = Math.max(...arr);
+  const min = Math.min(...arr);
+  const sum = arr.reduce((a,b)=>a+b,0);
+  const freq = {};
+  arr.forEach(v => freq[v] = (freq[v]||0)+1);
+  const unique = Object.keys(freq).length;
+  let isInc = true;
+  for (let i=1;i<N;i++) if(arr[i]<arr[i-1]){isInc=false;break;}
+  const reversed = [...arr].reverse();
+  const kk = ((k%N)+N)%N;
+  const rot = [...arr];
+  const rev2 = (a,l,r) => { while(l<r){[a[l],a[r]]=[a[r],a[l]];l++;r--;} };
+  rev2(rot,0,N-1); rev2(rot,0,kk-1); rev2(rot,kk,N-1);
+
+  const items = [
+    { label:'Sum', value: sum },
+    { label:'Max (INT_MIN init)', value: max },
+    { label:'Min (INT_MAX init)', value: min },
+    { label:'Size', value: N },
+    { label:'Unique elements', value: unique },
+    { label:'Increasing?', value: isInc ? '✅ Yes' : '❌ No' },
+    { label:`Reversed`, value: `[${reversed.join(', ')}]` },
+    { label:`Rotated k=${k}`, value: `[${rot.join(', ')}]` },
+  ];
+  res.innerHTML = items.map(it => `
+    <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:12px">
+      <div style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:4px">${it.label}</div>
+      <div style="font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent2)">${it.value}</div>
+    </div>
+  `).join('');
+}
+
+// ---- MATRIX HOVER ----
+document.querySelectorAll('.matrix-cell').forEach(cell => {
+  cell.addEventListener('mouseenter', () => {
+    const r = cell.dataset.r, c = cell.dataset.c;
+    document.querySelectorAll('.matrix-cell').forEach(cc => {
+      cc.classList.remove('row-hl','col-hl','diag-hl');
+      if (cc.dataset.r === r && cc.dataset.c === c) cc.classList.add('diag-hl');
+      else if (cc.dataset.r === r) cc.classList.add('row-hl');
+      else if (cc.dataset.c === c) cc.classList.add('col-hl');
+    });
+  });
+  cell.addEventListener('mouseleave', () => {
+    document.querySelectorAll('.matrix-cell').forEach(cc => {
+      cc.classList.remove('row-hl','col-hl','diag-hl');
+    });
+  });
+});
+
+// ---- INIT ----
+// Auto-open first card in each section
+document.querySelectorAll('.topic-header.open').forEach(h => {
+  h.nextElementSibling.classList.add('open');
+});
+</script>
+</body>
+</html>
